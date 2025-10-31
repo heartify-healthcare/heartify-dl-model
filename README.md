@@ -1,4 +1,4 @@
-# 🫀 Heartify - Deep Learning Model API
+# Heartify - Deep Learning Model API
 
 > Flask API backend for heart disease risk prediction using ECG signals and deep learning (ECG Foundation Model)
 
