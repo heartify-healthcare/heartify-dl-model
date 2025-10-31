@@ -63,15 +63,13 @@ git clone https://github.com/heartify-healthcare/heartify-dl-model.git
 cd heartify-dl-model
 
 # Install dependencies
-python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
 pip install -r requirements.txt
 
 # Configure .env file with your settings
 # DATABASE_URL, SMTP_*, SECRET_KEY, ECG_MODEL_PATH, etc.
 
 # Run server
-flask run
+python wsgi.py
 ```
 
 ## 🐳 Docker
