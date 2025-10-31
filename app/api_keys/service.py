@@ -75,11 +75,6 @@ class ApiKeyService:
         Returns:
             Tuple of (ApiKey, error_dict)
         """
-        # Check if email already has an active API key
-        existing_active_key = self.repo.get_active_by_email(email)
-        if existing_active_key:
-            return None, {"error": "Email already has an active API key. Please deactivate it first."}
-        
         # Deactivate all existing keys for this email (safety measure)
         self.repo.deactivate_all_for_email(email)
         

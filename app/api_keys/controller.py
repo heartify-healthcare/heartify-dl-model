@@ -53,8 +53,15 @@ def request_api_key():
         if '@' not in email or '.' not in email:
             return jsonify({"error": "Invalid email format"}), 400
         
-        # Create verification token
+        # Check if email already has an active API key
         service = ApiKeyService(g.db)
+        repo = service.repo
+        existing_active_key = repo.get_active_by_email(email)
+        
+        if existing_active_key:
+            return jsonify({"error": "Email already has an active API key. Please deactivate it first."}), 409
+        
+        # Create verification token
         token = service.create_verification_token(email, action="generate")
         
         # Send verification email
