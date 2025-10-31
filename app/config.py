@@ -15,12 +15,18 @@ class Config:
     # PostgreSQL database URI
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     
-    # Basic Authentication credentials for API key management endpoints
-    BASIC_AUTH_USERNAME = os.environ['BASIC_AUTH_USERNAME']
-    BASIC_AUTH_PASSWORD = os.environ['BASIC_AUTH_PASSWORD']
+    # Email configuration for API key verification
+    SMTP_HOST = os.environ['SMTP_HOST']
+    SMTP_PORT = int(os.environ['SMTP_PORT'])
+    SMTP_USER = os.environ['SMTP_USER']
+    SMTP_PASSWORD = os.environ['SMTP_PASSWORD']
+    SENDER_EMAIL = os.environ['SENDER_EMAIL']
+    
+    # Base URL for email verification links
+    BASE_URL = os.environ['BASE_URL']
     
     # ECG Model path (PyTorch .pt file)
     ECG_MODEL_PATH = os.environ['ECG_MODEL_PATH']
     
     # ECG Model version (integer)
-    MODEL_VERSION = int(os.environ.get('MODEL_VERSION', '1'))
+    MODEL_VERSION = int(os.environ['MODEL_VERSION'])

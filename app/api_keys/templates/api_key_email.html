@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your API Key - Heartify</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: fit-content;">
+    <div style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 600px; text-align: center; margin: 10px auto 10px auto; height: fit-content;">
+        <header>
+            <img src="https://res.cloudinary.com/diy6oyo6l/image/upload/v1761518459/unnamed_l98jcc.jpg" alt="Heartify Logo" style="width: 80px; margin-bottom: 20px;">
+            <h2 style="color: #4a90e2; margin: 0;">Heartify</h2>
+        </header>
+        <main>
+            <h1 style="color: #4a90e2; margin-bottom: 20px;">Your API Key</h1>
+            <p style="color: #333; line-height: 1.6; margin-bottom: 20px;">Hello <b>{{ email }}</b>,</p>
+            <p style="color: #333; line-height: 1.6; margin-bottom: 20px;">
+                Your email has been verified successfully! Here's your API key for accessing Heartify services.
+            </p>
+            <p style="color: #333; line-height: 1.6; margin-bottom: 20px;">
+                Please keep this key secure and do not share it with anyone.
+            </p>
+            <p style="color: #333; line-height: 1.6; margin-bottom: 10px; font-weight: bold;">Your API Key:</p>
+            <div style="background-color: #f8f9fa; border: 2px solid #4a90e2; border-radius: 5px; padding: 20px; margin: 20px 0; word-break: break-all;">
+                <code style="font-size: 16px; font-weight: bold; color: #333;">{{ api_key }}</code>
+            </div>
+            <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                To use this API key, include it in the <code>x-api-key</code> header of your HTTP requests.
+            </p>
+            <p style="color: #d9534f; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                <strong>Important:</strong> You can only have one active API key at a time. If you need a new key, you must deactivate the current one first.
+            </p>
+        </main>
+        <footer>
+            <p style="font-size: 14px; color: #888; margin: 10px 0;">
+                If you didn't request this API key, please contact our customer service center immediately: 
+                <a href="mailto:heartify.service@gmail.com" style="color: #4a90e2; text-decoration: underline; margin: 0 5px;">heartify.service@gmail.com</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

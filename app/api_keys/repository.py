@@ -1,6 +1,6 @@
 """Repository layer for API Key database operations"""
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from app.api_keys.entity import ApiKey
 
@@ -22,6 +22,17 @@ class ApiKeyRepository:
         """Retrieve an API key by its key string"""
         return self.db.query(ApiKey).filter(ApiKey.api_key == key).first()
     
+    def get_by_email(self, email: str) -> List[ApiKey]:
+        """Retrieve all API keys for a given email address"""
+        return self.db.query(ApiKey).filter(ApiKey.email == email).all()
+    
+    def get_active_by_email(self, email: str) -> Optional[ApiKey]:
+        """Retrieve the active API key for a given email address"""
+        return self.db.query(ApiKey).filter(
+            ApiKey.email == email,
+            ApiKey.active == True
+        ).first()
+    
     def update_active_status(self, key: str, active: bool) -> Optional[ApiKey]:
         """Update the active status of an API key"""
         api_key = self.get_by_key(key)
@@ -30,6 +41,13 @@ class ApiKeyRepository:
             self.db.commit()
             self.db.refresh(api_key)
         return api_key
+    
+    def deactivate_all_for_email(self, email: str) -> None:
+        """Deactivate all API keys for a given email address"""
+        api_keys = self.get_by_email(email)
+        for api_key in api_keys:
+            api_key.active = False
+        self.db.commit()
     
     def update_last_used(self, key: str) -> None:
         """Update the last_used timestamp for an API key"""
