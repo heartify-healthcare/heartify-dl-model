@@ -1,7 +1,7 @@
 services:
-  heartify-postgres:
+  heartify-dl-postgres:
     image: postgres:15-alpine
-    container_name: heartify-postgres
+    container_name: heartify-dl-postgres
     restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-heartify_dl_db}

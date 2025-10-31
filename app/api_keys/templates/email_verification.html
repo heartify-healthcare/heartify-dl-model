@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - Heartify</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: fit-content;">
+    <div style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 600px; text-align: center; margin: 10px auto 10px auto; height: fit-content;">
+        <header>
+            <img src="https://res.cloudinary.com/diy6oyo6l/image/upload/v1761518459/unnamed_l98jcc.jpg" alt="Heartify Logo" style="width: 80px; margin-bottom: 20px;">
+            <h2 style="color: #4a90e2; margin: 0;">Heartify</h2>
+        </header>
+        <main>
+            <h1 style="color: #4a90e2; margin-bottom: 20px;">{{ action_text }}</h1>
+            <p style="color: #333; line-height: 1.6; margin-bottom: 20px;">Hello <b>{{ email }}</b>,</p>
+            <p style="color: #333; line-height: 1.6; margin-bottom: 20px;">
+                We received a request for {{ action_text.lower() }} for your account.
+            </p>
+            <p style="color: #333; line-height: 1.6; margin-bottom: 30px;">
+                Please click the button below to verify your email address and complete the process:
+            </p>
+            <a href="{{ verification_link }}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold; margin-bottom: 30px;">
+                {{ button_text }}
+            </a>
+            <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                Or copy and paste this link into your browser:
+            </p>
+            <p style="color: #4a90e2; font-size: 14px; word-break: break-all; margin-bottom: 20px;">
+                {{ verification_link }}
+            </p>
+        </main>
+        <footer>
+            <p style="font-size: 14px; color: #888; margin: 10px 0;">
+                If you didn't request this, please ignore this email or contact our customer service center: 
+                <a href="mailto:heartify.service@gmail.com" style="color: #4a90e2; text-decoration: underline; margin: 0 5px;">heartify.service@gmail.com</a> 
+                for further assistance.
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

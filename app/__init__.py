@@ -18,11 +18,6 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
-    # Set Basic Auth credentials in environment for decorator access
-    import os
-    os.environ['BASIC_AUTH_USERNAME'] = app.config['BASIC_AUTH_USERNAME']
-    os.environ['BASIC_AUTH_PASSWORD'] = app.config['BASIC_AUTH_PASSWORD']
-    
     # Database connection setup - inject db session into request context
     @app.before_request
     def before_request():
