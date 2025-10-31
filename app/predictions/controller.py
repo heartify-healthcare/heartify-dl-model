@@ -1,179 +1,88 @@
-from flask import Blueprint, request, jsonify, g
-from app.predictions.schema import HeartDiseaseInput, PredictionResponse
-from app.predictions.service import PredictionService
-from app.auth.controller import jwt_required
+"""Predictions endpoint controller"""
+from flask import Blueprint, request, jsonify
+from app.api_keys.auth import api_key_required
+from app.predictions.ecg_model import ECGModel
+import numpy as np
+from datetime import datetime
 
-prediction_bp = Blueprint('predictions', __name__)
 
-@prediction_bp.route('/heart-disease', methods=['POST'])
-@jwt_required
-def predict_heart_disease():
+predictions_bp = Blueprint('predictions', __name__)
+
+
+@predictions_bp.route('/', methods=['POST'])
+@api_key_required
+def predict_ecg():
+    """
+    Perform ECG prediction using the fine-tuned ECG-FM model
+    
+    Requires: x-api-key header with valid API key
+    
+    Body:
+        {
+            "ecg_signal": [array of 130 float values for 130Hz 1-lead ECG]
+        }
+    
+    Returns:
+        200: JSON with prediction results
+        400: Invalid request
+        401: Invalid or missing API key
+        500: Model inference error
+    """
     try:
-        data = HeartDiseaseInput.parse_obj(request.json)
-        service = PredictionService(g.db)
+        data = request.get_json()
         
-        # Use authenticated user's ID from JWT token
-        prediction, error = service.predict_heart_disease(data, g.current_user['user_id'])
+        # Validate request body
+        if not data or 'ecg_signal' not in data:
+            return jsonify({
+                "error": "Missing required field: ecg_signal",
+                "expected_format": {
+                    "ecg_signal": "array of 130 float values"
+                }
+            }), 400
         
-        if error:
-            return jsonify(error), 400
-            
-        # Create response from prediction entity
-        response = PredictionResponse(
-            id=prediction.id,
-            user_id=prediction.user_id,
-            age=prediction.age,
-            sex=prediction.sex,
-            cp=prediction.cp,
-            trestbps=prediction.trestbps,
-            restecg=prediction.restecg,
-            thalach=prediction.thalach,
-            exang=prediction.exang,
-            probability=prediction.probability,
-            prediction=prediction.prediction,
-            created_at=prediction.created_at
-        )
-            
-        return jsonify(response.dict()), 201
+        ecg_signal = data['ecg_signal']
+        
+        # Validate ECG signal format
+        if not isinstance(ecg_signal, list):
+            return jsonify({"error": "ecg_signal must be an array"}), 400
+        
+        if len(ecg_signal) != 130:
+            return jsonify({
+                "error": f"ecg_signal must have exactly 130 values (got {len(ecg_signal)})",
+                "note": "This model expects 130Hz sampling rate with 1-second duration"
+            }), 400
+        
+        # Convert to numpy array
+        try:
+            ecg_array = np.array(ecg_signal, dtype=np.float32)
+        except Exception as e:
+            return jsonify({"error": f"Invalid ecg_signal format: {str(e)}"}), 400
+        
+        # Get model instance and perform prediction
+        model = ECGModel()
+        label, probabilities, embedding = model.predict(ecg_array)
+        
+        # Build response
+        response = {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "prediction": label,
+            "confidence": probabilities[label],
+            "probabilities": probabilities,
+            "metadata": {
+                "model": "ECG-FM fine-tuned 130Hz",
+                "signal_length": len(ecg_signal),
+                "sampling_rate": "130Hz"
+            }
+        }
+        
+        return jsonify(response), 200
+        
+    except RuntimeError as e:
+        # Model not loaded error
+        return jsonify({
+            "error": "Model initialization error",
+            "details": str(e)
+        }), 500
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-@prediction_bp.route('/', methods=['GET'])
-@jwt_required
-def list_predictions():
-    """Get all predictions for the authenticated user"""
-    service = PredictionService(g.db)
-    user_id = g.current_user['user_id']
-    predictions = service.get_user_predictions(user_id)
-    result = []
-    for p in predictions:
-        response = PredictionResponse(
-            id=p.id,
-            user_id=p.user_id,
-            age=p.age,
-            sex=p.sex,
-            cp=p.cp,
-            trestbps=p.trestbps,
-            restecg=p.restecg,
-            thalach=p.thalach,
-            exang=p.exang,
-            probability=p.probability,
-            prediction=p.prediction,
-            created_at=p.created_at
-        )
-        result.append(response.dict())
-    return jsonify(result), 200
-
-@prediction_bp.route('/<int:prediction_id>', methods=['GET'])
-@jwt_required
-def get_prediction(prediction_id):
-    service = PredictionService(g.db)
-    user_id = g.current_user['user_id']
-    
-    prediction = service.get_prediction(prediction_id)
-    if not prediction:
-        return jsonify({"error": "Prediction not found"}), 404
-    
-    # Check if prediction belongs to authenticated user
-    if prediction.user_id != user_id:
-        return jsonify({"error": "Access denied"}), 403
-    
-    response = PredictionResponse(
-        id=prediction.id,
-        user_id=prediction.user_id,
-        age=prediction.age,
-        sex=prediction.sex,
-        cp=prediction.cp,
-        trestbps=prediction.trestbps,
-        restecg=prediction.restecg,
-        thalach=prediction.thalach,
-        exang=prediction.exang,
-        probability=prediction.probability,
-        prediction=prediction.prediction,
-        created_at=prediction.created_at
-    )
-    return jsonify(response.dict()), 200
-
-@prediction_bp.route('/user/<int:user_id>', methods=['GET'])
-@jwt_required
-def get_user_predictions(user_id):
-    """Get predictions for a specific user (only accessible by the user themselves or admin)"""
-    current_user_id = g.current_user['user_id']
-    current_user_role = g.current_user.get('role', 'user')
-    
-    # Check if user is trying to access their own data or is an admin
-    if current_user_id != user_id and current_user_role != 'admin':
-        return jsonify({"error": "Access denied"}), 403
-    
-    service = PredictionService(g.db)
-    predictions = service.get_user_predictions(user_id)
-    result = []
-    for p in predictions:
-        response = PredictionResponse(
-            id=p.id,
-            user_id=p.user_id,
-            age=p.age,
-            sex=p.sex,
-            cp=p.cp,
-            trestbps=p.trestbps,
-            restecg=p.restecg,
-            thalach=p.thalach,
-            exang=p.exang,
-            probability=p.probability,
-            prediction=p.prediction,
-            created_at=p.created_at
-        )
-        result.append(response.dict())
-    return jsonify(result), 200
-
-@prediction_bp.route('/<int:prediction_id>', methods=['DELETE'])
-@jwt_required
-def delete_prediction(prediction_id):
-    service = PredictionService(g.db)
-    user_id = g.current_user['user_id']
-    user_role = g.current_user.get('role', 'user')
-    
-    # Check if prediction exists
-    prediction = service.get_prediction(prediction_id)
-    if not prediction:
-        return jsonify({"error": "Prediction not found"}), 404
-    
-    # Check if user owns the prediction or is admin
-    if prediction.user_id != user_id and user_role != 'admin':
-        return jsonify({"error": "Access denied"}), 403
-    
-    if not service.delete_prediction(prediction_id):
-        return jsonify({"error": "Failed to delete prediction"}), 500
-        
-    return jsonify({"message": "Prediction deleted"}), 200
-
-# Admin-only route to get all predictions
-@prediction_bp.route('/admin/all', methods=['GET'])
-@jwt_required
-def get_all_predictions():
-    """Admin only: Get all predictions from all users"""
-    user_role = g.current_user.get('role', 'user')
-    
-    if user_role != 'admin':
-        return jsonify({"error": "Admin access required"}), 403
-    
-    service = PredictionService(g.db)
-    predictions = service.get_all_predictions()
-    result = []
-    for p in predictions:
-        response = PredictionResponse(
-            id=p.id,
-            user_id=p.user_id,
-            age=p.age,
-            sex=p.sex,
-            cp=p.cp,
-            trestbps=p.trestbps,
-            restecg=p.restecg,
-            thalach=p.thalach,
-            exang=p.exang,
-            probability=p.probability,
-            prediction=p.prediction,
-            created_at=p.created_at
-        )
-        result.append(response.dict())
-    return jsonify(result), 200
+        return jsonify({"error": str(e)}), 500
