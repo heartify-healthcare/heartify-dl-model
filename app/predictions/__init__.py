@@ -1,0 +1,1 @@
+from app.predictions.controller import prediction_bp
