@@ -237,17 +237,3 @@ class ECGModel:
         embedding = features.cpu().numpy().flatten()
         
         return label, probabilities, physio_features, embedding
-    
-    def predict_from_file(self, file_path: str) -> Tuple[str, Dict[str, float], Dict]:
-        """
-        Predict from a .npy file containing ECG signal
-        
-        Args:
-            file_path: Path to .npy file
-            
-        Returns:
-            Tuple of (prediction_label, probabilities_dict, features_dict)
-        """
-        ecg_signal = np.load(file_path).astype(np.float32)
-        label, probs, features, _ = self.predict(ecg_signal)
-        return label, probs, features

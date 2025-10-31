@@ -55,12 +55,3 @@ class ApiKeyRepository:
         if api_key:
             api_key.last_used = datetime.utcnow()
             self.db.commit()
-    
-    def delete(self, key: str) -> bool:
-        """Delete an API key from database"""
-        api_key = self.get_by_key(key)
-        if api_key:
-            self.db.delete(api_key)
-            self.db.commit()
-            return True
-        return False
