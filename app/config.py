@@ -21,3 +21,6 @@ class Config:
     
     # ECG Model path (PyTorch .pt file)
     ECG_MODEL_PATH = os.environ['ECG_MODEL_PATH']
+    
+    # ECG Model version (integer)
+    MODEL_VERSION = int(os.environ.get('MODEL_VERSION', '1'))
