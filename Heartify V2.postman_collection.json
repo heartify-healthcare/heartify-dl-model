@@ -1,0 +1,1303 @@
+{
+	"info": {
+		"_postman_id": "ead47a14-a57f-42e5-a259-bee37976a3ae",
+		"name": "Heartify V2",
+		"description": "Complete API collection for Healthcare Microservices Platform with User Management, Authentication, and Device Registration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34017840",
+		"_collection_link": "https://team-cua-phi.postman.co/workspace/UIT~24d32d71-7ef9-45ca-bc29-96578b9aba21/collection/34017840-ead47a14-a57f-42e5-a259-bee37976a3ae?action=share&source=collection_link&creator=34017840"
+	},
+	"item": [
+		{
+			"name": "user-service",
+			"item": [
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "/auth/register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"songokupkj\",\r\n    \"email\": \"songokupkj@gmail.com\",\r\n    \"phonenumber\": \"0865942413\",\r\n    \"password\": \"zxcv1234@123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/auth/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/auth/request-verify",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"thebestphiever@gmail.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/auth/request-verify",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"auth",
+										"request-verify"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/auth/verify",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"songokupkj@gmail.com\",\r\n    \"otpCode\": \"953537\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/auth/verify",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"auth",
+										"verify"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/auth/login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"thebestphiever\",\r\n    \"password\": \"zxcv1234@123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/auth/recover-password",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"songokupkj\",\r\n    \"email\": \"songokupkj@gmail.com\",\r\n    \"phoneNumber\": \"0865942413\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/auth/recover-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"auth",
+										"recover-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/auth/me",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/auth/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"auth",
+										"me"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "/users",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"votranphi111111\",\r\n    \"email\": \"songokupkj11111@gmail.com\",\r\n    \"phonenumber\": \"08659426054\",\r\n    \"password\": \"zxcv1234@123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/users",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/users/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/users/{{user_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"users",
+										"{{user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/users/profile",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/users/profile",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"users",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/users/:id",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"songokupkj111\",\r\n    \"email\": \"thebestphiever1111@gmail.com\",\r\n    \"phonenumber\": \"0865942429\",\r\n    \"password\": \"zxcv1234@123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/users/{{user_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"users",
+										"{{user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/users/profile",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"songokupkj1111\",\r\n    \"email\": \"thebestphiever111@gmail.com\",\r\n    \"phonenumber\": \"0865942430\",\r\n    \"password\": \"zxcv1234@123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/users/profile",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"users",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/users/profile/health",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"dob\": \"2005-05-29\",\r\n  \"sex\": 0,\r\n  \"cp\": 2,\r\n  \"trestbps\": 120,\r\n  \"exang\": 0\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/users/profile/health",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"users",
+										"profile",
+										"health"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/users/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/users/{{user_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"users",
+										"{{user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/users/change-password",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"currentPassword\": \"Of6IWrun\",\r\n    \"newPassword\": \"zxcv1234@123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/users/change-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"users",
+										"change-password"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "ai-service",
+			"item": [
+				{
+					"name": "ecg-sessions",
+					"item": [
+						{
+							"name": "/ecg-sessions",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/ecg-sessions?page=0&size=10&sortBy=createdAt&sortDir=desc",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"ecg-sessions"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Page number (default: 0)"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Page size (default: 10)"
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt",
+											"description": "Sort field (default: createdAt)"
+										},
+										{
+											"key": "sortDir",
+											"value": "desc",
+											"description": "Sort direction (asc/desc, default: desc)"
+										}
+									]
+								},
+								"description": "Get all ECG sessions for the authenticated user with pagination"
+							},
+							"response": []
+						},
+						{
+							"name": "/ecg-sessions/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/ecg-sessions/{{session_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"ecg-sessions",
+										"{{session_id}}"
+									]
+								},
+								"description": "Get detailed information about a specific ECG session including ECG recording, prediction, and explanation"
+							},
+							"response": []
+						},
+						{
+							"name": "/ecg-sessions (Create)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"deviceId\": \"device-12345-abcde\",\n    \"rawData\": {\n        \"signal\": [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.9, 0.8],\n        \"lead\": \"II\",\n        \"duration\": 10\n    },\n    \"denoisedData\": {\n        \"signal\": [0.52, 0.61, 0.71, 0.81, 0.91, 1.02, 0.91, 0.81],\n        \"lead\": \"II\",\n        \"duration\": 10\n    },\n    \"samplingRate\": 130\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/ecg-sessions",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"ecg-sessions"
+									]
+								},
+								"description": "Create a new ECG session - Main workflow:\n1. Save ECG recording (raw + denoised data)\n2. Call AI prediction model\n3. Call LLM for explanation\n4. Create session linking all data\n\nNote: Currently using mock data for AI responses"
+							},
+							"response": []
+						},
+						{
+							"name": "/ecg-sessions/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/ecg-sessions/{{session_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"ecg-sessions",
+										"{{session_id}}"
+									]
+								},
+								"description": "Delete an ECG session and all related data (ECG recording, prediction, explanation)"
+							},
+							"response": []
+						}
+					],
+					"description": "ECG Session endpoints - Main workflow for ECG analysis"
+				},
+				{
+					"name": "ecg-recordings",
+					"item": [
+						{
+							"name": "/ecg-recordings/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/ecg-recordings/{{ecg_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"ecg-recordings",
+										"{{ecg_id}}"
+									]
+								},
+								"description": "Get ECG recording by ID"
+							},
+							"response": []
+						},
+						{
+							"name": "/ecg-recordings/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/ecg-recordings/{{ecg_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"ecg-recordings",
+										"{{ecg_id}}"
+									]
+								},
+								"description": "Delete an ECG recording"
+							},
+							"response": []
+						},
+						{
+							"name": "/ecg-recordings (Create)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rawData\": {\n        \"signal\": [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.9, 0.8],\n        \"lead\": \"II\",\n        \"duration\": 10\n    },\n    \"denoisedData\": {\n        \"signal\": [0.52, 0.61, 0.71, 0.81, 0.91, 1.02, 0.91, 0.81],\n        \"lead\": \"II\",\n        \"duration\": 10\n    },\n    \"samplingRate\": 250\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/ecg-recordings",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"ecg-recordings"
+									]
+								},
+								"description": "Create a new ECG recording"
+							},
+							"response": []
+						}
+					],
+					"description": "ECG Recording endpoints - Manage ECG signal data"
+				},
+				{
+					"name": "predictions",
+					"item": [
+						{
+							"name": "/predictions/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/predictions/{{prediction_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"predictions",
+										"{{prediction_id}}"
+									]
+								},
+								"description": "Get prediction by ID"
+							},
+							"response": []
+						},
+						{
+							"name": "/predictions/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/predictions/{{prediction_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"predictions",
+										"{{prediction_id}}"
+									]
+								},
+								"description": "Delete a prediction"
+							},
+							"response": []
+						},
+						{
+							"name": "/predictions (Create)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"modelVersion\": 1,\n    \"diagnosis\": \"Normal Sinus Rhythm\",\n    \"probability\": 0.95,\n    \"features\": {\n        \"heart_rate\": 75,\n        \"qrs_duration\": 0.08,\n        \"pr_interval\": 0.16,\n        \"qt_interval\": 0.40\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/predictions",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"predictions"
+									]
+								},
+								"description": "Create a new prediction"
+							},
+							"response": []
+						}
+					],
+					"description": "Prediction endpoints - Manage AI model predictions"
+				},
+				{
+					"name": "explanations",
+					"item": [
+						{
+							"name": "/explanations/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/explanations/{{explanation_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"explanations",
+										"{{explanation_id}}"
+									]
+								},
+								"description": "Get explanation by ID"
+							},
+							"response": []
+						},
+						{
+							"name": "/explanations/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/explanations/{{explanation_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"explanations",
+										"{{explanation_id}}"
+									]
+								},
+								"description": "Delete an explanation"
+							},
+							"response": []
+						},
+						{
+							"name": "/explanations (Create)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"llmModelVersion\": 1,\n    \"prompt\": {\n        \"diagnosis\": \"Normal Sinus Rhythm\",\n        \"probability\": 0.95,\n        \"features\": {\n            \"heart_rate\": 75,\n            \"qrs_duration\": 0.08\n        }\n    },\n    \"explanation\": {\n        \"summary\": \"Your ECG shows a normal sinus rhythm\",\n        \"details\": \"All cardiac intervals are within normal limits\",\n        \"recommendation\": \"Continue regular check-ups\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/{{version}}/explanations",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"explanations"
+									]
+								},
+								"description": "Create a new explanation"
+							},
+							"response": []
+						}
+					],
+					"description": "Explanation endpoints - Manage LLM-generated explanations"
+				}
+			],
+			"description": "AI Service endpoints for ECG analysis, predictions, and explanations"
+		},
+		{
+			"name": "config-server",
+			"item": [
+				{
+					"name": "eureka-server",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{config_server_password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{config_server_username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{config_server_url}}/eureka-server/default",
+							"host": [
+								"{{config_server_url}}"
+							],
+							"path": [
+								"eureka-server",
+								"default"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api-gateway",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{config_server_password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{config_server_username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{config_server_url}}/api-gateway/default",
+							"host": [
+								"{{config_server_url}}"
+							],
+							"path": [
+								"api-gateway",
+								"default"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user-service",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{config_server_password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{config_server_username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{config_server_url}}/user-service/default",
+							"host": [
+								"{{config_server_url}}"
+							],
+							"path": [
+								"user-service",
+								"default"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ai-service",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{config_server_password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{config_server_username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{config_server_url}}/ai-service/default",
+							"host": [
+								"{{config_server_url}}"
+							],
+							"path": [
+								"ai-service",
+								"default"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "dl-model",
+			"item": [
+				{
+					"name": "api-keys",
+					"item": [
+						{
+							"name": "/api-keys/generation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    pm.environment.set(\"api_key\", response.api_key);",
+											"    console.log(\"API Key saved:\", response.api_key);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{basic_auth_username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{basic_auth_password}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{dl_model_url}}/api/{{version}}/api-keys/generation",
+									"host": [
+										"{{dl_model_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"api-keys",
+										"generation"
+									]
+								},
+								"description": "Generate a new API key using Basic Authentication.\n\nRequires Basic Auth credentials (username/password) configured in environment variables.\n\nResponse includes:\n- api_key: The generated key\n- active: Status (true by default)\n- created_at: Timestamp"
+							},
+							"response": []
+						},
+						{
+							"name": "/api-keys/activation",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{basic_auth_username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{basic_auth_password}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"api_key\": \"{{api_key}}\",\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{dl_model_url}}/api/{{version}}/api-keys/activation",
+									"host": [
+										"{{dl_model_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"api-keys",
+										"activation"
+									]
+								},
+								"description": "Activate or deactivate an API key.\n\nRequires Basic Auth and request body:\n```json\n{\n  \"api_key\": \"your_key_here\",\n  \"active\": true/false\n}\n```\n\nSet active to:\n- true: Activate the key\n- false: Deactivate the key"
+							},
+							"response": []
+						}
+					],
+					"description": "API Key management endpoints\n\nThese endpoints require Basic Authentication with credentials from environment variables."
+				},
+				{
+					"name": "predictions",
+					"item": [
+						{
+							"name": "/predictions",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{api_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ecg_signal\": [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05, 0.0, -0.05, -0.1, -0.15, -0.2, -0.25, -0.3, -0.35, -0.4, -0.45, -0.5, -0.55, -0.6, -0.65, -0.7, -0.75, -0.8, -0.85, -0.9, -0.95, -1.0, -0.95, -0.9, -0.85, -0.8, -0.75, -0.7, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05, 0.0, -0.05, -0.1, -0.15, -0.2, -0.25, -0.3, -0.35, -0.4, -0.45, -0.5, -0.55, -0.6, -0.65, -0.7, -0.75, -0.8, -0.85, -0.9, -0.95, -1.0, -0.95, -0.9, -0.85, -0.8, -0.75, -0.7]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{dl_model_url}}/api/{{version}}/predictions",
+									"host": [
+										"{{dl_model_url}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"predictions"
+									]
+								},
+								"description": "Perform ECG classification using the fine-tuned ECG-FM model.\n\n**Authentication:** Requires `x-api-key` header with a valid API key.\n\n**Request Body:**\n```json\n{\n  \"ecg_signal\": [array of 130 float values]\n}\n```\n\n**ECG Signal Requirements:**\n- Must be exactly 130 values (1-lead, 130Hz sampling rate, 1 second duration)\n- Values should be float numbers representing ECG amplitude\n- Typically normalized values between -1.0 and 1.0\n\n**Response:**\n```json\n{\n  \"timestamp\": \"2025-10-31T...\",\n  \"prediction\": \"Normal\" or \"Abnormal\",\n  \"confidence\": 0.9234,\n  \"probabilities\": {\n    \"Normal\": 0.9234,\n    \"Abnormal\": 0.0766\n  },\n  \"metadata\": {\n    \"model\": \"ECG-FM fine-tuned 130Hz\",\n    \"signal_length\": 130,\n    \"sampling_rate\": \"130Hz\"\n  }\n}\n```\n\n**Note:** Make sure you have generated an API key first and it's stored in the environment variable `{{api_key}}`."
+							},
+							"response": []
+						}
+					],
+					"description": "ECG Prediction endpoints\n\nThese endpoints require API Key authentication via `x-api-key` header."
+				}
+			],
+			"description": "Deep Learning Model Service - ECG Classification API\n\nThis service provides:\n1. API Key Management (with Basic Auth)\n2. ECG Signal Classification (with API Key Auth)\n\nBase URL: http://localhost:5000"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string",
+			"description": "API Gateway base URL"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token from login"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT refresh token from login"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string",
+			"description": "Current user ID"
+		},
+		{
+			"key": "device_id",
+			"value": "",
+			"type": "string",
+			"description": "Device ID for ECG sessions"
+		},
+		{
+			"key": "session_id",
+			"value": "",
+			"type": "string",
+			"description": "ECG Session ID"
+		},
+		{
+			"key": "ecg_id",
+			"value": "",
+			"type": "string",
+			"description": "ECG Recording ID"
+		},
+		{
+			"key": "prediction_id",
+			"value": "",
+			"type": "string",
+			"description": "Prediction ID"
+		},
+		{
+			"key": "explanation_id",
+			"value": "",
+			"type": "string",
+			"description": "Explanation ID"
+		},
+		{
+			"key": "config_server_url",
+			"value": "http://localhost:8888",
+			"type": "string",
+			"description": "Config Server URL"
+		},
+		{
+			"key": "config_server_username",
+			"value": "heartify",
+			"type": "string",
+			"description": "Config Server username"
+		},
+		{
+			"key": "config_server_password",
+			"value": "heartify",
+			"type": "string",
+			"description": "Config Server password"
+		}
+	]
+}
