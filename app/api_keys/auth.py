@@ -7,6 +7,7 @@ from app.api_keys.service import ApiKeyService
 def api_key_required(f):
     """
     Decorator to require valid API key in x-api-key header
+    
     Validates the key against the database
     """
     @wraps(f)

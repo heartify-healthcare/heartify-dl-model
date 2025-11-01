@@ -25,7 +25,7 @@ class EmailService:
             to_email: Recipient email address
             subject: Email subject
             html_content: HTML content of the email
-            
+        
         Returns:
             True if email was sent successfully, False otherwise
         """
@@ -60,7 +60,7 @@ class EmailService:
             verification_token: Unique verification token
             base_url: Base URL of the application
             action: Either "generate" or "deactivate"
-            
+        
         Returns:
             True if email was sent successfully, False otherwise
         """
@@ -100,7 +100,7 @@ class EmailService:
         Args:
             to_email: Recipient email address
             api_key: The generated API key
-            
+        
         Returns:
             True if email was sent successfully, False otherwise
         """
@@ -130,7 +130,7 @@ class EmailService:
         
         Args:
             to_email: Recipient email address
-            
+        
         Returns:
             True if email was sent successfully, False otherwise
         """

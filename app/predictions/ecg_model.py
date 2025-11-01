@@ -13,6 +13,7 @@ import scipy.signal as sps
 class ECGFMClassifier(nn.Module):
     """
     ECG Foundation Model Classifier
+
     Fine-tuned for binary classification (Normal vs Abnormal)
     """
     
@@ -45,6 +46,7 @@ class ECGFMClassifier(nn.Module):
 class ECGModel:
     """
     Singleton wrapper for ECG-FM model inference
+
     Handles model loading and prediction
     """
     _instance = None
@@ -90,7 +92,7 @@ class ECGModel:
         
         Args:
             ecg_signal: 1D numpy array of ECG signal (length=130 for 130Hz, 1-lead)
-            
+        
         Returns:
             Preprocessed tensor ready for model input [1, 1, length]
         """
@@ -108,12 +110,13 @@ class ECGModel:
     def compute_physiological_features(self, ecg_signal: np.ndarray, fs: int = 130) -> Dict:
         """
         Compute physiological features from ECG signal
+
         Based on simplified feature extraction (without neurokit2 dependency)
         
         Args:
             ecg_signal: 1D numpy array of ECG signal
             fs: Sampling frequency (default 130Hz)
-            
+        
         Returns:
             Dictionary of physiological features
         """
@@ -203,7 +206,7 @@ class ECGModel:
         
         Args:
             ecg_signal: 1D numpy array of ECG signal
-            
+        
         Returns:
             Tuple of (prediction_label, probabilities_dict, features_dict, embedding)
             - prediction_label: "Normal" or "Abnormal"

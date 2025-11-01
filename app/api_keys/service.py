@@ -25,7 +25,7 @@ class ApiKeyService:
         Args:
             email: Email address to verify
             action: Either "generate" or "deactivate"
-            
+        
         Returns:
             Verification token string
         """
@@ -43,7 +43,7 @@ class ApiKeyService:
         
         Args:
             token: Verification token
-            
+        
         Returns:
             Tuple of (email, action, error_dict)
         """
@@ -71,7 +71,7 @@ class ApiKeyService:
         
         Args:
             email: Email address of the owner
-            
+        
         Returns:
             Tuple of (ApiKey, error_dict)
         """
@@ -100,7 +100,7 @@ class ApiKeyService:
         
         Args:
             email: Email address of the owner
-            
+        
         Returns:
             Tuple of (success_bool, error_dict)
         """
@@ -119,7 +119,7 @@ class ApiKeyService:
         
         Args:
             key: The API key string
-            
+        
         Returns:
             True if key is valid and active, False otherwise
         """
