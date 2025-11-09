@@ -9,7 +9,7 @@ from datetime import datetime
 predictions_bp = Blueprint('predictions', __name__)
 
 
-@predictions_bp.route('/', methods=['POST'])
+@predictions_bp.route('', methods=['POST'])
 @api_key_required
 def predict_ecg():
     """
