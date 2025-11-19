@@ -91,7 +91,7 @@ class ECGModel:
         Preprocess ECG signal for model input
         
         Args:
-            ecg_signal: 1D numpy array of ECG signal (length=130 for 130Hz, 1-lead)
+            ecg_signal: 1D numpy array of ECG signal (length=1300 for 130Hz, 10-second, 1-lead ECG)
         
         Returns:
             Preprocessed tensor ready for model input [1, 1, length]

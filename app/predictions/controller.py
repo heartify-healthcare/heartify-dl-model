@@ -19,7 +19,7 @@ def predict_ecg():
     
     Body:
         {
-            "ecg_signal": [array of 130 float values for 130Hz 1-lead ECG]
+            "ecg_signal": [array of 1300 float values for 130Hz 1-lead ECG (10 seconds)]
         }
     
     Returns:
@@ -36,7 +36,7 @@ def predict_ecg():
             return jsonify({
                 "error": "Missing required field: ecg_signal",
                 "expected_format": {
-                    "ecg_signal": "array of 130 float values"
+                    "ecg_signal": "array of 1300 float values (10 seconds @ 130Hz)"
                 }
             }), 400
         
@@ -46,10 +46,10 @@ def predict_ecg():
         if not isinstance(ecg_signal, list):
             return jsonify({"error": "ecg_signal must be an array"}), 400
         
-        if len(ecg_signal) != 130:
+        if len(ecg_signal) != 1300:
             return jsonify({
-                "error": f"ecg_signal must have exactly 130 values (got {len(ecg_signal)})",
-                "note": "This model expects 130Hz sampling rate with 1-second duration"
+                "error": f"ecg_signal must have exactly 1300 values (got {len(ecg_signal)})",
+                "note": "This model expects 130Hz sampling rate with 10-second duration (1300 samples)"
             }), 400
         
         # Convert to numpy array
