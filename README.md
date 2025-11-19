@@ -29,7 +29,7 @@ Analyze ECG signal and return prediction results.
 **Request:**
 ```json
 {
-  "ecg_signal": [array of 130 float values]
+  "ecg_signal": [array of 1300 float values]
 }
 ```
 
@@ -82,7 +82,7 @@ docker-compose up -d
 
 **ECG Foundation Model (ECG-FM)**
 - Architecture: CNN encoder + Linear classifier
-- Input: 1-lead ECG, 130 samples (130Hz, 1 second)
+- Input: 1-lead ECG, 1300 samples (130Hz, 10 second)
 - Output: Binary classification (Normal/Abnormal)
 - Weights: `model/ecg_finetuned_130hz.pt`
 
