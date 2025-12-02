@@ -51,12 +51,12 @@ Analyze ECG signal and return prediction results.
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Flask 2.3.3, PostgreSQL, SQLAlchemy
+- **Backend**: Python 3.12.0 or below, Flask 2.3.3, PostgreSQL, SQLAlchemy
 - **Deep Learning**: PyTorch 2.6.0
 - **Signal Processing**: SciPy 1.15.3
 
 ## 📦 Installation
-
+Clone and install dependencies
 ```bash
 # Clone repository
 git clone https://github.com/heartify-healthcare/heartify-dl-model.git
@@ -66,8 +66,13 @@ cd heartify-dl-model
 pip install -r requirements.txt
 
 # Configure .env file with your settings
-# DATABASE_URL, SMTP_*, SECRET_KEY, ECG_MODEL_PATH, etc.
+# It should be looked like .env.example
+```
 
+Download the `ecg_fm_best.pth` in [link](https://www.kaggle.com/code/minhphuc2544/finetuned-ecgfm-new/output) and put it in `model` folder.
+
+Run server
+```bash
 # Run server
 python wsgi.py
 ```
@@ -84,7 +89,7 @@ docker-compose up -d
 - Architecture: CNN encoder + Linear classifier
 - Input: 1-lead ECG, 1300 samples (130Hz, 10 second)
 - Output: Binary classification (Normal/Abnormal)
-- Weights: `model/ecg_finetuned_130hz.pt`
+- Weights: `model/ecg_fm_best.pth`
 
 ## 📚 Academic Context
 
