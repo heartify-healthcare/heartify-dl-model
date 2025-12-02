@@ -1,4 +1,3 @@
-"""API Key management endpoints"""
 import os
 from flask import Blueprint, request, jsonify, g, render_template_string
 from app.api_keys.service import ApiKeyService
@@ -10,7 +9,7 @@ api_keys_bp = Blueprint('api_keys', __name__)
 
 
 def get_email_service():
-    """Get configured email service instance"""
+    """Get configured email service instance."""
     return EmailService(
         smtp_host=Config.SMTP_HOST,
         smtp_port=Config.SMTP_PORT,
@@ -21,25 +20,13 @@ def get_email_service():
 
 
 def get_base_url():
-    """Get base URL from request or config"""
+    """Get base URL from request or config."""
     return Config.BASE_URL or request.url_root.rstrip('/')
 
 
 @api_keys_bp.route('/generation', methods=['POST'])
 def request_api_key():
-    """
-    Request API key generation by providing email
-    
-    Body:
-        {
-            "email": "user@example.com"
-        }
-    
-    Returns:
-        200: Verification email sent
-        400: Invalid request body
-        500: Error during processing
-    """
+    """Request API key generation by providing email."""
     try:
         data = request.get_json()
         
@@ -82,20 +69,7 @@ def request_api_key():
 
 @api_keys_bp.route('/deactivation', methods=['POST'])
 def request_api_key_deactivation():
-    """
-    Request API key deactivation by providing email
-    
-    Body:
-        {
-            "email": "user@example.com"
-        }
-    
-    Returns:
-        200: Verification email sent
-        400: Invalid request body
-        404: No active API key found
-        500: Error during processing
-    """
+    """Request API key deactivation by providing email."""
     try:
         data = request.get_json()
         
@@ -138,15 +112,7 @@ def request_api_key_deactivation():
 
 @api_keys_bp.route('/verify', methods=['GET'])
 def verify_email():
-    """
-    Verify email and complete API key generation or deactivation
-    
-    Query params:
-        token: Verification token from email
-    
-    Returns:
-        HTML page with success message
-    """
+    """Verify email and complete API key generation or deactivation."""
     try:
         token = request.args.get('token')
         

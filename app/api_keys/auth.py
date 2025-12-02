@@ -1,15 +1,10 @@
-"""Authentication and authorization decorators"""
 from functools import wraps
 from flask import request, jsonify, g
 from app.api_keys.service import ApiKeyService
 
 
 def api_key_required(f):
-    """
-    Decorator to require valid API key in x-api-key header
-    
-    Validates the key against the database
-    """
+    """Decorator to require valid API key in x-api-key header."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # Get API key from header

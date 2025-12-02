@@ -1,4 +1,3 @@
-"""Predictions endpoint controller"""
 from flask import Blueprint, request, jsonify, current_app
 from app.api_keys.auth import api_key_required
 from app.predictions.ecg_model import ECGModel
@@ -12,22 +11,7 @@ predictions_bp = Blueprint('predictions', __name__)
 @predictions_bp.route('', methods=['POST'])
 @api_key_required
 def predict_ecg():
-    """
-    Perform ECG prediction using the fine-tuned ECG-FM model
-    
-    Requires: x-api-key header with valid API key
-    
-    Body:
-        {
-            "ecg_signal": [array of 1300 float values for 130Hz 1-lead ECG (10 seconds)]
-        }
-    
-    Returns:
-        200: JSON with prediction results
-        400: Invalid request
-        401: Invalid or missing API key
-        500: Model inference error
-    """
+    """Perform ECG prediction using the fine-tuned ECG-FM model."""
     try:
         data = request.get_json()
         

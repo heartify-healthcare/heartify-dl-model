@@ -6,15 +6,7 @@ from app.predictions.ecg_model import ECGModel
 
 
 def create_app(config_class=Config):
-    """
-    Create and configure the Flask application
-    
-    This is the main application factory that:
-    - Loads configuration
-    - Sets up database connection
-    - Registers blueprints (API routes)
-    - Initializes ML models
-    """
+    """Create and configure the Flask application."""
     app = Flask(__name__)
     app.config.from_object(config_class)
     

@@ -1,7 +1,3 @@
-"""
-ECG-FM Fine-tuned Model for ECG Classification
-Based on the PyTorch implementation from ecg-fm-finetuned.ipynb
-"""
 import torch
 import torch.nn as nn
 import numpy as np
@@ -11,11 +7,7 @@ import scipy.signal as sps
 
 
 class ECGFMClassifier(nn.Module):
-    """
-    ECG Foundation Model Classifier
-
-    Fine-tuned for binary classification (Normal vs Abnormal)
-    """
+    """ECG Foundation Model Classifier fine-tuned for binary classification (Normal vs Abnormal)."""
     
     def __init__(self, input_dim=130, hidden_dim=256, num_classes=2):
         super().__init__()
@@ -44,11 +36,7 @@ class ECGFMClassifier(nn.Module):
 
 
 class ECGModel:
-    """
-    Singleton wrapper for ECG-FM model inference
-
-    Handles model loading and prediction
-    """
+    """Singleton wrapper for ECG-FM model inference. Handles model loading and prediction."""
     _instance = None
     
     def __new__(cls):
@@ -59,12 +47,7 @@ class ECGModel:
         return cls._instance
     
     def load(self, model_path: str) -> None:
-        """
-        Load the fine-tuned ECG model weights
-        
-        Args:
-            model_path: Path to the .pt model weights file
-        """
+        """Load the fine-tuned ECG model weights."""
         if self._model is None:
             try:
                 # Determine device (CPU or CUDA)
@@ -87,15 +70,7 @@ class ECGModel:
                 raise RuntimeError(f"Failed to load ECG model: {str(e)}")
     
     def preprocess(self, ecg_signal: np.ndarray) -> torch.Tensor:
-        """
-        Preprocess ECG signal for model input
-        
-        Args:
-            ecg_signal: 1D numpy array of ECG signal (length=1300 for 130Hz, 10-second, 1-lead ECG)
-        
-        Returns:
-            Preprocessed tensor ready for model input [1, 1, length]
-        """
+        """Preprocess ECG signal for model input."""
         # Normalize signal (z-score normalization)
         signal_mean = np.mean(ecg_signal)
         signal_std = np.std(ecg_signal) + 1e-6
@@ -108,18 +83,7 @@ class ECGModel:
         return tensor.to(self._device)
     
     def compute_physiological_features(self, ecg_signal: np.ndarray, fs: int = 130) -> Dict:
-        """
-        Compute physiological features from ECG signal
-
-        Based on simplified feature extraction (without neurokit2 dependency)
-        
-        Args:
-            ecg_signal: 1D numpy array of ECG signal
-            fs: Sampling frequency (default 130Hz)
-        
-        Returns:
-            Dictionary of physiological features
-        """
+        """Compute physiological features from ECG signal based on simplified feature extraction."""
         try:
             # Remove DC offset
             ecg = ecg_signal - np.mean(ecg_signal)
@@ -201,19 +165,7 @@ class ECGModel:
         return features
     
     def predict(self, ecg_signal: np.ndarray) -> Tuple[str, Dict[str, float], Dict, np.ndarray]:
-        """
-        Predict ECG classification with physiological features
-        
-        Args:
-            ecg_signal: 1D numpy array of ECG signal
-        
-        Returns:
-            Tuple of (prediction_label, probabilities_dict, features_dict, embedding)
-            - prediction_label: "Normal" or "Abnormal"
-            - probabilities_dict: {"Normal": 0.xx, "Abnormal": 0.xx}
-            - features_dict: Physiological features (HR, HRV, QRS, etc.)
-            - embedding: Feature embedding from encoder (for advanced analysis)
-        """
+        """Predict ECG classification with physiological features."""
         if self._model is None:
             raise RuntimeError("Model not loaded. Call load() first.")
         

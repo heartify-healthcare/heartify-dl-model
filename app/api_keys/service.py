@@ -1,4 +1,3 @@
-"""Service layer for API Key business logic"""
 import secrets
 import uuid
 from sqlalchemy.orm import Session
@@ -13,22 +12,13 @@ verification_tokens = {}
 
 
 class ApiKeyService:
-    """Business logic for API key management"""
+    """Business logic for API key management."""
     
     def __init__(self, db: Session):
         self.repo = ApiKeyRepository(db)
     
     def create_verification_token(self, email: str, action: str = "generate") -> str:
-        """
-        Create a verification token for email verification
-        
-        Args:
-            email: Email address to verify
-            action: Either "generate" or "deactivate"
-        
-        Returns:
-            Verification token string
-        """
+        """Create a verification token for email verification."""
         token = str(uuid.uuid4())
         verification_tokens[token] = {
             "email": email,
@@ -38,15 +28,7 @@ class ApiKeyService:
         return token
     
     def verify_token(self, token: str) -> Tuple[Optional[str], Optional[str], Optional[Dict]]:
-        """
-        Verify a token and get the associated email and action
-        
-        Args:
-            token: Verification token
-        
-        Returns:
-            Tuple of (email, action, error_dict)
-        """
+        """Verify a token and get the associated email and action."""
         if token not in verification_tokens:
             return None, None, {"error": "Invalid or expired token"}
         
@@ -66,15 +48,7 @@ class ApiKeyService:
         return email, action, None
     
     def generate_api_key_for_email(self, email: str) -> Tuple[Optional[ApiKey], Optional[Dict]]:
-        """
-        Generate a new API key for an email address
-        
-        Args:
-            email: Email address of the owner
-        
-        Returns:
-            Tuple of (ApiKey, error_dict)
-        """
+        """Generate a new API key for an email address."""
         # Deactivate all existing keys for this email (safety measure)
         self.repo.deactivate_all_for_email(email)
         
@@ -95,15 +69,7 @@ class ApiKeyService:
             return None, {"error": f"Failed to create API key: {str(e)}"}
     
     def deactivate_api_key_for_email(self, email: str) -> Tuple[bool, Optional[Dict]]:
-        """
-        Deactivate the active API key for an email address
-        
-        Args:
-            email: Email address of the owner
-        
-        Returns:
-            Tuple of (success_bool, error_dict)
-        """
+        """Deactivate the active API key for an email address."""
         # Get the active API key for this email
         active_key = self.repo.get_active_by_email(email)
         if not active_key:
@@ -114,15 +80,7 @@ class ApiKeyService:
         return True, None
     
     def validate_api_key(self, key: str) -> bool:
-        """
-        Validate if an API key exists and is active
-        
-        Args:
-            key: The API key string
-        
-        Returns:
-            True if key is valid and active, False otherwise
-        """
+        """Validate if an API key exists and is active."""
         api_key = self.repo.get_by_key(key)
         if api_key and api_key.active:
             # Update last_used timestamp

@@ -1,4 +1,3 @@
-"""Email service for API Key verification and notifications"""
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -8,7 +7,7 @@ import os
 
 
 class EmailService:
-    """Handles sending emails for API key operations"""
+    """Handles sending emails for API key operations."""
     
     def __init__(self, smtp_host: str, smtp_port: int, smtp_user: str, smtp_password: str, sender_email: str):
         self.smtp_host = smtp_host
@@ -18,17 +17,7 @@ class EmailService:
         self.sender_email = sender_email
     
     def _send_email(self, to_email: str, subject: str, html_content: str) -> bool:
-        """
-        Send an email with HTML content
-        
-        Args:
-            to_email: Recipient email address
-            subject: Email subject
-            html_content: HTML content of the email
-        
-        Returns:
-            True if email was sent successfully, False otherwise
-        """
+        """Send an email with HTML content."""
         try:
             # Create message
             msg = MIMEMultipart('alternative')
@@ -52,18 +41,7 @@ class EmailService:
             return False
     
     def send_verification_email(self, to_email: str, verification_token: str, base_url: str, action: str = "generate") -> bool:
-        """
-        Send email verification link
-        
-        Args:
-            to_email: Recipient email address
-            verification_token: Unique verification token
-            base_url: Base URL of the application
-            action: Either "generate" or "deactivate"
-        
-        Returns:
-            True if email was sent successfully, False otherwise
-        """
+        """Send email verification link."""
         template_path = os.path.join(os.path.dirname(__file__), 'templates', 'email_verification.html')
         
         try:
@@ -94,16 +72,7 @@ class EmailService:
         return self._send_email(to_email, subject, html_content)
     
     def send_api_key_email(self, to_email: str, api_key: str) -> bool:
-        """
-        Send API key to user via email
-        
-        Args:
-            to_email: Recipient email address
-            api_key: The generated API key
-        
-        Returns:
-            True if email was sent successfully, False otherwise
-        """
+        """Send API key to user via email."""
         template_path = os.path.join(os.path.dirname(__file__), 'templates', 'api_key_email.html')
         
         try:
@@ -125,15 +94,7 @@ class EmailService:
         return self._send_email(to_email, subject, html_content)
     
     def send_deactivation_confirmation_email(self, to_email: str) -> bool:
-        """
-        Send API key deactivation confirmation
-        
-        Args:
-            to_email: Recipient email address
-        
-        Returns:
-            True if email was sent successfully, False otherwise
-        """
+        """Send API key deactivation confirmation."""
         template_path = os.path.join(os.path.dirname(__file__), 'templates', 'deactivation_email.html')
         
         try:
