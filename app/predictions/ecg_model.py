@@ -1,42 +1,95 @@
+import os
+import sys
 import torch
 import torch.nn as nn
 import numpy as np
-import os
 from typing import Tuple, Dict
-import scipy.signal as sps
+from scipy import signal as sps
+import math
+
+# --- Constants for Signal Processing ---
+ORIGIN_FS = 130   # Original sampling rate (Polar H10)
+TARGET_FS = 500   # Target sampling rate for model
+TARGET_LEN = 5000 # Expected input length for model (10 seconds @ 500Hz)
+SAMPLES_ORIGIN = 1300  # 130Hz * 10 seconds
+
+# Multi-label classes
+CLASSES = ["AFIB", "AFL", "Brady", "IAVB", "LBBB", "Normal", "PAC", "PVC", "RBBB", "STD", "STE", "Tachy"]
+
+DIAGNOSIS_MAP = {
+    "AFIB":   "Rung nhĩ (Atrial Fibrillation)",
+    "AFL":    "Cuồng nhĩ (Atrial Flutter)",
+    "Brady":  "Nhịp chậm (<60 BPM)",
+    "IAVB":   "Block nhĩ thất độ I",
+    "LBBB":   "Block nhánh trái",
+    "Normal": "Bình thường (Normal Sinus Rhythm)",
+    "PAC":    "Ngoại tâm thu nhĩ",
+    "PVC":    "Ngoại tâm thu thất",
+    "RBBB":   "Block nhánh phải",
+    "STD":    "Chênh xuống đoạn ST (Thiếu máu cơ tim)",
+    "STE":    "Chênh lên đoạn ST (Nhồi máu cơ tim)",
+    "Tachy":  "Nhịp nhanh (>100 BPM)"
+}
 
 
-class ECGFMClassifier(nn.Module):
-    """ECG Foundation Model Classifier fine-tuned for binary classification (Normal vs Abnormal)."""
+def _setup_fairseq_env():
+    """Setup fairseq and fairseq-signals paths if available locally."""
+    cwd = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    fairseq_path = os.path.join(cwd, "fairseq")
+    signals_path = os.path.join(cwd, "fairseq-signals")
     
-    def __init__(self, input_dim=130, hidden_dim=256, num_classes=2):
+    if os.path.exists(fairseq_path) and fairseq_path not in sys.path:
+        sys.path.insert(0, fairseq_path)
+    if os.path.exists(signals_path) and signals_path not in sys.path:
+        sys.path.insert(0, signals_path)
+
+
+# Setup environment before importing fairseq modules
+_setup_fairseq_env()
+
+# Import fairseq-signals model components
+try:
+    from fairseq_signals.models.wav2vec.wav2vec2_cmsc_rlm import Wav2Vec2CMSCRLMModel, Wav2Vec2CMSCRLMConfig
+except ImportError:
+    # Fallback for alternative package structure
+    try:
+        from fairseq_signals.models.ecg_transformer import ECGTransformerModel as Wav2Vec2CMSCRLMModel
+        from fairseq_signals.models.ecg_transformer import ECGTransformerConfig as Wav2Vec2CMSCRLMConfig
+    except ImportError as e:
+        raise ImportError(f"Failed to import fairseq-signals components: {e}")
+
+
+class ECGFM_MultiLabel(nn.Module):
+    """ECG Foundation Model for Multi-label Classification (12 classes)."""
+    
+    def __init__(self, num_classes: int = 12):
         super().__init__()
-        self.encoder = nn.Sequential(
-            nn.Conv1d(1, 16, 7, padding=3),
+        cfg = Wav2Vec2CMSCRLMConfig()
+        if hasattr(cfg, 'model'):
+            model_cfg = cfg.model
+        else:
+            model_cfg = cfg
+            
+        # Fix Architecture to match training
+        model_cfg.encoder_embed_dim = 768
+        model_cfg.conv_feature_layers = "[(256, 2, 2)] * 4"
+        
+        self.enc = Wav2Vec2CMSCRLMModel(model_cfg)
+        
+        self.head = nn.Sequential(
+            nn.Linear(768, 256),
             nn.ReLU(),
-            nn.Conv1d(16, 32, 5, padding=2),
-            nn.ReLU(),
-            nn.Conv1d(32, 64, 3, padding=1),
-            nn.ReLU(),
-            nn.AdaptiveAvgPool1d(1)
-        )
-        self.classifier = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(64, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, num_classes)
+            nn.Dropout(0.3),
+            nn.Linear(256, num_classes)
         )
 
-    def forward(self, x, return_features=False):
-        feats = self.encoder(x)
-        logits = self.classifier(feats)
-        if return_features:
-            return logits, feats.squeeze(-1)
-        return logits
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        res = self.enc(source=x, padding_mask=None, mask=False)
+        return self.head(res['x'].mean(dim=1))
 
 
 class ECGModel:
-    """Singleton wrapper for ECG-FM model inference. Handles model loading and prediction."""
+    """Singleton wrapper for ECG-FM Multi-label model inference."""
     _instance = None
     
     def __new__(cls):
@@ -47,22 +100,21 @@ class ECGModel:
         return cls._instance
     
     def load(self, model_path: str) -> None:
-        """Load the fine-tuned ECG model weights."""
+        """Load the fine-tuned ECG multi-label model weights."""
         if self._model is None:
             try:
                 # Determine device (CPU or CUDA)
                 self._device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
                 
-                # Initialize model
-                self._model = ECGFMClassifier().to(self._device)
+                # Initialize model with 12 classes
+                self._model = ECGFM_MultiLabel(num_classes=len(CLASSES)).to(self._device)
                 
                 # Load weights
                 if os.path.exists(model_path):
-                    self._model.load_state_dict(
-                        torch.load(model_path, map_location=self._device)
-                    )
+                    state = torch.load(model_path, map_location=self._device)
+                    self._model.load_state_dict(state)
                     self._model.eval()
-                    print(f"✅ ECG model loaded from: {model_path}")
+                    print(f"✅ ECG Multi-label model loaded from: {model_path}")
                 else:
                     raise FileNotFoundError(f"Model file not found: {model_path}")
                     
@@ -70,20 +122,50 @@ class ECGModel:
                 raise RuntimeError(f"Failed to load ECG model: {str(e)}")
     
     def preprocess(self, ecg_signal: np.ndarray) -> torch.Tensor:
-        """Preprocess ECG signal for model input."""
-        # Normalize signal (z-score normalization)
-        signal_mean = np.mean(ecg_signal)
-        signal_std = np.std(ecg_signal) + 1e-6
-        normalized = (ecg_signal - signal_mean) / signal_std
+        """
+        Preprocess 130Hz ECG signal to 500Hz format for model input.
         
-        # Convert to tensor and add batch/channel dimensions
-        tensor = torch.tensor(normalized, dtype=torch.float32)
-        tensor = tensor.unsqueeze(0).unsqueeze(0)  # [1, 1, length]
+        Input: 1300 samples (10 seconds @ 130Hz)
+        Output: Tensor of shape [1, 12, 5000] (batch, channels, samples)
+        
+        Processing steps from convert.py:
+        1. Detrend - remove baseline wander
+        2. Polyphase Resample 130Hz -> 500Hz (up=50, down=13)
+        3. Fix length to exactly 5000 samples
+        4. Normalize (Z-score)
+        5. Tile to 12 leads
+        """
+        ecg = np.array(ecg_signal, dtype=np.float32)
+        ecg = np.nan_to_num(ecg)
+        
+        # Step 1: Detrend - remove baseline drift
+        ecg_detrend = sps.detrend(ecg)
+        
+        # Step 2: Polyphase Resample from 130Hz to 500Hz
+        # GCD(500, 130) = 10 -> up=50, down=13
+        g = math.gcd(TARGET_FS, ORIGIN_FS)
+        up = TARGET_FS // g   # 50
+        down = ORIGIN_FS // g  # 13
+        ecg_resampled = sps.resample_poly(ecg_detrend, up, down)
+        
+        # Step 3: Fix length to exactly TARGET_LEN (5000) samples
+        if len(ecg_resampled) != TARGET_LEN:
+            ecg_resampled = sps.resample(ecg_resampled, TARGET_LEN)
+        
+        # Step 4: Normalize (Z-score)
+        if np.std(ecg_resampled) > 1e-6:
+            ecg_normalized = (ecg_resampled - np.mean(ecg_resampled)) / np.std(ecg_resampled)
+        else:
+            ecg_normalized = np.zeros_like(ecg_resampled)
+        
+        # Step 5: Tile to 12 leads and create batch tensor [1, 12, 5000]
+        ecg_12lead = np.tile(ecg_normalized, (12, 1))  # Shape: (12, 5000)
+        tensor = torch.tensor(ecg_12lead, dtype=torch.float32).unsqueeze(0)  # [1, 12, 5000]
         
         return tensor.to(self._device)
     
     def compute_physiological_features(self, ecg_signal: np.ndarray, fs: int = 130) -> Dict:
-        """Compute physiological features from ECG signal based on simplified feature extraction."""
+        """Compute physiological features from original 130Hz ECG signal."""
         try:
             # Remove DC offset
             ecg = ecg_signal - np.mean(ecg_signal)
@@ -93,14 +175,12 @@ class ECGModel:
             ecg_filt = sps.filtfilt(b, a, ecg)
             
             # Simple R-peak detection using local maxima
-            # Find peaks with minimum distance of 0.4s (min 150 bpm)
             min_distance = int(0.4 * fs)
             threshold = 0.3 * np.max(ecg_filt)
             
             peaks = []
             for i in range(min_distance, len(ecg_filt) - min_distance):
                 if ecg_filt[i] > threshold:
-                    # Check if it's a local maximum
                     is_peak = True
                     for j in range(i - min_distance, i + min_distance):
                         if j != i and ecg_filt[j] >= ecg_filt[i]:
@@ -111,7 +191,6 @@ class ECGModel:
             
             rpeaks = np.array(peaks)
             
-            # Check if we have enough R peaks
             if len(rpeaks) < 2:
                 return {
                     "heart_rate": None,
@@ -122,31 +201,19 @@ class ECGModel:
                     "note": "Insufficient R-peaks detected"
                 }
             
-            # RR intervals in milliseconds
             rr_intervals = np.diff(rpeaks) / fs * 1000
-            
-            # Filter outliers (300-2000 ms range = 30-200 bpm)
             valid_rr = rr_intervals[(rr_intervals > 300) & (rr_intervals < 2000)]
             
             if len(valid_rr) < 2:
                 hr = None
                 hrv_rmssd = None
             else:
-                # Calculate heart rate
                 hr = round(60000 / np.mean(valid_rr), 2)
-                
-                # Calculate HRV (RMSSD)
-                if len(valid_rr) >= 2:
-                    hrv_rmssd = round(float(np.sqrt(np.mean(np.square(np.diff(valid_rr))))), 3)
-                else:
-                    hrv_rmssd = None
+                hrv_rmssd = round(float(np.sqrt(np.mean(np.square(np.diff(valid_rr))))), 3)
             
-            # Estimate QRS duration (average width at 50% amplitude)
             qrs_duration = None
-            if len(rpeaks) > 0:
-                # Simplified QRS estimation: ~10% of average RR interval
-                if len(valid_rr) > 0:
-                    qrs_duration = round(np.mean(valid_rr) * 0.1 / 1000, 3)  # in seconds
+            if len(rpeaks) > 0 and len(valid_rr) > 0:
+                qrs_duration = round(np.mean(valid_rr) * 0.1 / 1000, 3)
             
             features = {
                 "heart_rate": hr,
@@ -164,31 +231,30 @@ class ECGModel:
         
         return features
     
-    def predict(self, ecg_signal: np.ndarray) -> Tuple[str, Dict[str, float], Dict, np.ndarray]:
-        """Predict ECG classification with physiological features."""
+    def predict(self, ecg_signal: np.ndarray) -> Tuple[np.ndarray, Dict]:
+        """
+        Predict ECG multi-label classification.
+        
+        Args:
+            ecg_signal: 1D numpy array of 1300 samples (130Hz, 10 seconds)
+            
+        Returns:
+            Tuple of:
+                - probabilities: numpy array of 12 class probabilities
+                - physio_features: dict of physiological features
+        """
         if self._model is None:
             raise RuntimeError("Model not loaded. Call load() first.")
         
-        # Preprocess input
+        # Preprocess input (130Hz -> 500Hz, tile to 12 leads)
         x = self.preprocess(ecg_signal)
         
         # Inference
         with torch.no_grad():
-            output, features = self._model(x, return_features=True)
-            probs = torch.softmax(output, dim=1).cpu().numpy().flatten()
-            pred_label_idx = np.argmax(probs)
+            logits = self._model(x)
+            probs = torch.sigmoid(logits).cpu().numpy()[0]  # Shape: (12,)
         
-        # Map to labels
-        label = "Normal" if pred_label_idx == 0 else "Abnormal"
-        
-        probabilities = {
-            "Normal": round(float(probs[0]), 4),
-            "Abnormal": round(float(probs[1]), 4)
-        }
-        
-        # Compute physiological features
+        # Compute physiological features from original signal
         physio_features = self.compute_physiological_features(ecg_signal)
         
-        embedding = features.cpu().numpy().flatten()
-        
-        return label, probabilities, physio_features, embedding
+        return probs, physio_features

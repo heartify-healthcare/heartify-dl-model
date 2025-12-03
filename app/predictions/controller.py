@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 from app.api_keys.auth import api_key_required
-from app.predictions.ecg_model import ECGModel
+from app.predictions.ecg_model import ECGModel, CLASSES, DIAGNOSIS_MAP
 import numpy as np
 from datetime import datetime
 
@@ -11,7 +11,7 @@ predictions_bp = Blueprint('predictions', __name__)
 @predictions_bp.route('', methods=['POST'])
 @api_key_required
 def predict_ecg():
-    """Perform ECG prediction using the fine-tuned ECG-FM model."""
+    """Perform ECG prediction using the fine-tuned ECG-FM Multi-label model."""
     try:
         data = request.get_json()
         
@@ -44,20 +44,18 @@ def predict_ecg():
         
         # Get model instance and perform prediction
         model = ECGModel()
-        label, probabilities, physio_features, embedding = model.predict(ecg_array)
+        probs, physio_features = model.predict(ecg_array)
         
         # Get model version from config
         model_version = current_app.config.get('MODEL_VERSION', 1)
         
-        # Map prediction to diagnosis
-        diagnosis_map = {
-            "Normal": "Normal Sinus Rhythm",
-            "Abnormal": "Abnormal ECG Pattern"
-        }
-        diagnosis = diagnosis_map.get(label, "Unknown")
+        # Find the class with the highest probability among 12 classes
+        top_idx = int(np.argmax(probs))
+        top_class_code = CLASSES[top_idx]
+        top_probability = round(float(probs[top_idx]), 4)
         
-        # Get the probability of the predicted class
-        probability = round(probabilities[label], 4)
+        # Map to full diagnosis string using DIAGNOSIS_MAP
+        diagnosis = DIAGNOSIS_MAP.get(top_class_code, top_class_code)
         
         # Format features - remove None values and add only valid features
         features = {}
@@ -78,7 +76,7 @@ def predict_ecg():
         response = {
             "modelVersion": model_version,
             "diagnosis": diagnosis,
-            "probability": probability,
+            "probability": top_probability,
             "features": features
         }
         

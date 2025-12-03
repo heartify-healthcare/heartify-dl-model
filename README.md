@@ -51,12 +51,13 @@ Analyze ECG signal and return prediction results.
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Python 3.12.0 or below, Flask 2.3.3, PostgreSQL, SQLAlchemy
-- **Deep Learning**: PyTorch 2.6.0
-- **Signal Processing**: SciPy 1.15.3
+- **Backend**: Python >= 3.9, Flask 2.3.3, PostgreSQL, SQLAlchemy
+- **Deep Learning**: PyTorch 2.5.1, fairseq, fairseq-signals
+- **Signal Processing**: SciPy 1.13.1, NumPy 2.0.2
 
 ## 📦 Installation
-Clone and install dependencies
+
+### 1. Clone and install dependencies
 ```bash
 # Clone repository
 git clone https://github.com/heartify-healthcare/heartify-dl-model.git
@@ -69,7 +70,24 @@ pip install -r requirements.txt
 # It should be looked like .env.example
 ```
 
-Download the `ecg_fm_best.pth` in [link](https://www.kaggle.com/code/minhphuc2544/finetuned-ecgfm-new/output) and put it in `model` folder.
+### 2. Install fairseq and fairseq-signals
+The ECG-FM model requires `fairseq` and `fairseq-signals` libraries. Clone them into the project root:
+
+```bash
+# Clone fairseq (v0.12.2)
+git clone https://github.com/facebookresearch/fairseq.git
+cd fairseq
+git checkout v0.12.2
+cd ..
+
+# Clone fairseq-signals
+git clone https://github.com/Jwoo5/fairseq-signals.git
+```
+
+> **Note:** The model will automatically detect and use these local directories. No need to run `pip install` for these packages.
+
+### 3. Download model weights
+Download the `ecg_fm_best.pth` from [Kaggle](https://www.kaggle.com/code/minhphuc2544/finetuned-ecgfm-new/output) and place it in the `model/` folder.
 
 Run server
 ```bash
@@ -85,11 +103,18 @@ docker-compose up -d
 
 ## 🔬 Model Details
 
-**ECG Foundation Model (ECG-FM)**
-- Architecture: CNN encoder + Linear classifier
-- Input: 1-lead ECG, 1300 samples (130Hz, 10 second)
-- Output: Binary classification (Normal/Abnormal)
+**ECG Foundation Model (ECG-FM) - Multi-label**
+- Architecture: Wav2Vec2 CMSC-RLM encoder + MLP classifier head
+- Input: 1-lead ECG, 1300 samples (130Hz, 10 seconds) → resampled to 500Hz (5000 samples)
+- Output: Multi-label classification (12 classes)
+- Classes: `AFIB`, `AFL`, `Brady`, `IAVB`, `LBBB`, `Normal`, `PAC`, `PVC`, `RBBB`, `STD`, `STE`, `Tachy`
 - Weights: `model/ecg_fm_best.pth`
+
+**Signal Processing Pipeline:**
+1. Detrend (remove baseline wander)
+2. Polyphase resample 130Hz → 500Hz
+3. Z-score normalization
+4. Tile to 12 leads for model input
 
 ## 📚 Academic Context
 

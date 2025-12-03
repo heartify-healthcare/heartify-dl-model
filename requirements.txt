@@ -7,13 +7,19 @@ sqlalchemy==1.4.54
 psycopg2-binary==2.9.10
 
 # Deep Learning (PyTorch for ECG-FM model)
-# Training environment: PyTorch 2.6.0+cu124, Python 3.11.13, CUDA 12.4
-# Production: Using CPU version for compatibility
-torch==2.6.0
-numpy==2.3.4
+# Training environment: Python >= 3.9, ECGFM Multi-label 500Hz model
+torch==2.5.1
+numpy==2.0.2
 
 # Scientific Computing (required for ECG signal processing)
-scipy==1.15.3
+scipy==1.13.1
+scikit-learn==1.5.2
+wfdb==4.3.0
+
+# Transformers and Hydra (required for ECGFM model)
+transformers==4.30.0
+hydra-core==1.1.2
+omegaconf==2.1.2
 
 # Utilities
 python-dotenv==1.0.0

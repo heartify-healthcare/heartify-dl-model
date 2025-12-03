@@ -5,3 +5,9 @@ __pycache__/
 ecg_fm_best.pth
 
 .vscode
+
+venv
+
+fairseq
+
+fairseq-signals
