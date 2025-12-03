@@ -51,7 +51,7 @@ Analyze ECG signal and return prediction results.
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Python >= 3.9, Flask 2.3.3, PostgreSQL, SQLAlchemy
+- **Backend**: Python 3.10.0, Flask 2.3.3, PostgreSQL, SQLAlchemy
 - **Deep Learning**: PyTorch 2.5.1, fairseq, fairseq-signals
 - **Signal Processing**: SciPy 1.13.1, NumPy 2.0.2
 
