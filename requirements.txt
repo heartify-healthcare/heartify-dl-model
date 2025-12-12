@@ -16,6 +16,9 @@ scipy==1.13.1
 scikit-learn==1.5.2
 wfdb==4.3.0
 
+# Visualization (for ECG waveform image generation)
+matplotlib==3.9.2
+
 # Transformers and Hydra (required for ECGFM model)
 transformers==4.30.0
 hydra-core==1.1.2

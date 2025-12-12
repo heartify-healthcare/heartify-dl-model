@@ -6,6 +6,11 @@ import numpy as np
 from typing import Tuple, Dict
 from scipy import signal as sps
 import math
+import base64
+import io
+import matplotlib
+matplotlib.use('Agg')  # Non-interactive backend for server environments
+import matplotlib.pyplot as plt
 
 # --- Constants for Signal Processing ---
 ORIGIN_FS = 130   # Original sampling rate (Polar H10)
@@ -258,3 +263,74 @@ class ECGModel:
         physio_features = self.compute_physiological_features(ecg_signal)
         
         return probs, physio_features
+
+    def generate_ecg_image_base64(self, ecg_signal: np.ndarray, fs: int = 130) -> str:
+        """
+        Generate a Base64-encoded PNG image of the denoised ECG signal.
+        
+        This creates a clean visualization suitable for multimodal AI analysis.
+        The plot has X/Y labels, units, and grid - but NO title for cleaner output.
+        
+        Args:
+            ecg_signal: 1D numpy array of ECG samples (typically 1300 samples at 130Hz)
+            fs: Sampling frequency in Hz (default: 130Hz for Polar H10)
+            
+        Returns:
+            Base64-encoded string of the PNG image
+        """
+        try:
+            # Apply detrending and filtering for cleaner visualization
+            ecg = np.array(ecg_signal, dtype=np.float32)
+            ecg = np.nan_to_num(ecg)
+            ecg_detrend = sps.detrend(ecg)
+            
+            # Bandpass filter 0.5-40 Hz for cleaner visualization
+            b, a = sps.butter(3, [0.5/(fs/2), 40/(fs/2)], btype='band')
+            ecg_filtered = sps.filtfilt(b, a, ecg_detrend)
+            
+            # Create time axis in seconds
+            duration = len(ecg_filtered) / fs
+            time_axis = np.linspace(0, duration, len(ecg_filtered))
+            
+            # Create figure with appropriate size for ECG visualization
+            fig, ax = plt.subplots(figsize=(12, 4), dpi=100)
+            
+            # Plot ECG signal
+            ax.plot(time_axis, ecg_filtered, color='#1a5276', linewidth=0.8)
+            
+            # Configure axes labels and units (NO title as per requirement)
+            ax.set_xlabel('Time (seconds)', fontsize=10, fontweight='medium')
+            ax.set_ylabel('Amplitude (mV)', fontsize=10, fontweight='medium')
+            
+            # Enable grid for better readability (ECG standard)
+            ax.grid(True, which='major', linestyle='-', linewidth=0.5, alpha=0.7)
+            ax.grid(True, which='minor', linestyle=':', linewidth=0.3, alpha=0.5)
+            ax.minorticks_on()
+            
+            # Set axis limits
+            ax.set_xlim(0, duration)
+            y_margin = 0.1 * (np.max(ecg_filtered) - np.min(ecg_filtered))
+            ax.set_ylim(np.min(ecg_filtered) - y_margin, np.max(ecg_filtered) + y_margin)
+            
+            # Tight layout for clean output
+            plt.tight_layout()
+            
+            # Save to in-memory buffer as PNG
+            buffer = io.BytesIO()
+            fig.savefig(buffer, format='png', bbox_inches='tight', 
+                       facecolor='white', edgecolor='none')
+            buffer.seek(0)
+            
+            # Encode to Base64
+            image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+            
+            # Clean up
+            plt.close(fig)
+            buffer.close()
+            
+            return image_base64
+            
+        except Exception as e:
+            # Return empty string if visualization fails (non-critical feature)
+            print(f"Warning: ECG image generation failed: {str(e)}")
+            return ""

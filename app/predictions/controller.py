@@ -46,6 +46,9 @@ def predict_ecg():
         model = ECGModel()
         probs, physio_features = model.predict(ecg_array)
         
+        # Generate ECG visualization as Base64 image for multimodal AI
+        ecg_image_base64 = model.generate_ecg_image_base64(ecg_array)
+        
         # Get model version from config
         model_version = current_app.config.get('MODEL_VERSION', 1)
         
@@ -77,7 +80,8 @@ def predict_ecg():
             "modelVersion": model_version,
             "diagnosis": diagnosis,
             "probability": top_probability,
-            "features": features
+            "features": features,
+            "ecgImageBase64": ecg_image_base64
         }
         
         return jsonify(response), 200
