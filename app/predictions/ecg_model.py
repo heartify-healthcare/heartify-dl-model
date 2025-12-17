@@ -24,16 +24,16 @@ CLASSES = ["AFIB", "AFL", "Brady", "IAVB", "LBBB", "Normal", "PAC", "PVC", "RBBB
 DIAGNOSIS_MAP = {
     "AFIB":   "Rung nhĩ (Atrial Fibrillation)",
     "AFL":    "Cuồng nhĩ (Atrial Flutter)",
-    "Brady":  "Nhịp chậm (<60 BPM)",
-    "IAVB":   "Block nhĩ thất độ I",
-    "LBBB":   "Block nhánh trái",
-    "Normal": "Bình thường (Normal Sinus Rhythm)",
-    "PAC":    "Ngoại tâm thu nhĩ",
-    "PVC":    "Ngoại tâm thu thất",
-    "RBBB":   "Block nhánh phải",
-    "STD":    "Chênh xuống đoạn ST (Thiếu máu cơ tim)",
-    "STE":    "Chênh lên đoạn ST (Nhồi máu cơ tim)",
-    "Tachy":  "Nhịp nhanh (>100 BPM)"
+    "Brady":  "Nhịp chậm (Bradycardia)",
+    "IAVB":   "Block nhĩ thất độ I (First-degree Atrioventricular Block)",
+    "LBBB":   "Block nhánh trái (Left Bundle Branch Block)",
+    "Normal": "Nhịp xoang bình thường (Normal Sinus Rhythm)",
+    "PAC":    "Ngoại tâm thu nhĩ (Premature Atrial Contraction)",
+    "PVC":    "Ngoại tâm thu thất (Premature Ventricular Contraction)",
+    "RBBB":   "Block nhánh phải (Right Bundle Branch Block)",
+    "STD":    "Chênh xuống đoạn ST (ST Depression)",
+    "STE":    "Chênh lên đoạn ST (ST Elevation)",
+    "Tachy":  "Nhịp nhanh (Tachycardia)"
 }
 
 
