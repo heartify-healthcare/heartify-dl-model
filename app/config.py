@@ -30,3 +30,7 @@ class Config:
     
     # ECG Model version (integer)
     MODEL_VERSION = int(os.environ['MODEL_VERSION'])
+
+    # Seeding Configuration
+    SEED_API_KEY = os.environ.get('SEED_API_KEY')
+    SEED_EMAIL = os.environ.get('SEED_EMAIL')

@@ -21,10 +21,38 @@ def create_app(config_class=Config):
         if db is not None:
             db.close()
     
-    # Create database tables
+    # Create database tables & SEED DATA
     with app.app_context():
         Base.metadata.create_all(bind=engine)
         print("✅ Database tables created")
+
+        seed_key = app.config.get('SEED_API_KEY')
+        seed_email = app.config.get('SEED_EMAIL')
+
+        if seed_key and seed_email:
+            # Create a new temporary session for seeding
+            db_session = get_db_connection()
+            try:
+                # Check if the API KEY is existed (Idempotency check)
+                existing_key = db_session.query(ApiKey).filter(ApiKey.api_key == seed_key).first()
+                
+                if not existing_key:
+                    print(f"🌱 Seeding default API Key for {seed_email}...")
+                    new_api_key = ApiKey(
+                        api_key=seed_key,
+                        email=seed_email,
+                        active=True
+                    )
+                    db_session.add(new_api_key)
+                    db_session.commit()
+                    print("✅ Seeded API Key successfully.")
+                else:
+                    print("ℹ️ Seed API Key already exists. Skipping.")
+            except Exception as e:
+                print(f"⚠️ Failed to seed API Key: {str(e)}")
+                db_session.rollback()
+            finally:
+                db_session.close()
     
     # Load ECG model
     try:
