@@ -1,0 +1,90 @@
+name: AI Service CI/CD
+
+on:
+  push:
+    branches: [ "feat/dockerfile", "develop", "main" ]
+  pull_request:
+    branches: [ "develop", "main" ]
+  # Cho phép chạy thủ công để force build
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REPOSITORY_NAME: heartify/denoised-model # Đổi tên này khớp với tên trong ECR của bạn
+  
+  # Cấu hình Model Hugging Face (Khớp với Dockerfile)
+  HF_REPO_ID: "minhphuc2544/classify-model"
+  HF_FILENAME: "classify-model.pth"
+
+jobs:
+  # ====================================================
+  # JOB 1: CHECK CHANGES
+  # Chỉ build khi code thay đổi để tiết kiệm tài nguyên
+  # ====================================================
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_build: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect Changes
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          # Build nếu thay đổi code app, thư viện, hoặc cấu hình docker
+          files: |
+            app/**
+            Dockerfile
+            requirements.txt
+            wsgi.py
+
+  # ====================================================
+  # JOB 2: BUILD & PUSH DOCKER IMAGE
+  # ====================================================
+  build-and-push:
+    needs: check-changes
+    runs-on: ubuntu-latest
+    # Chạy khi: (Có file thay đổi) HOẶC (Chạy thủ công)
+    if: ${{ needs.check-changes.outputs.should_build == 'true' || github.event_name == 'workflow_dispatch' }}
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Docker Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          echo "Building AI Service..."
+          
+          # Build Image
+          # Lưu ý: Truyền --build-arg để Dockerfile biết tải model nào
+          docker build \
+            --build-arg HF_REPO_ID="${{ env.HF_REPO_ID }}" \
+            --build-arg HF_FILENAME="${{ env.HF_FILENAME }}" \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG .
+          
+          # Push image gốc (Commit SHA)
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG
+          
+          # Nếu là nhánh main, cập nhật thêm tag 'latest'
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            docker tag $ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY_NAME:latest
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY_NAME:latest
+            echo "::notice ::Pushed latest tag for AI Service"
+          fi
