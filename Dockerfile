@@ -53,6 +53,18 @@ RUN pip install --no-cache-dir "cython<3" numpy setuptools && \
     cd fairseq && \
     pip install --no-cache-dir --no-build-isolation .
 
+ARG HF_REPO_ID="minhphuc2544/classify-model"
+ARG HF_FILENAME="classify_model.pth"
+
+RUN mkdir -p model
+RUN python -c "from huggingface_hub import hf_hub_download; \
+    hf_hub_download( \
+        repo_id='${HF_REPO_ID}', \
+        filename='${HF_FILENAME}', \
+        local_dir='model', \
+        local_dir_use_symlinks=False, \
+    )"
+
 # ==========================================
 # STAGE 2: RUNNER (Production)
 # ==========================================
@@ -80,6 +92,8 @@ COPY --from=builder /app/fairseq-signals ./fairseq-signals
 # 3. Copy Source Code chính & Config
 COPY wsgi.py .
 COPY app ./app
+
+COPY --from=builder /app/model ./model
 # COPY .env . (Nếu test local)
 
 RUN adduser --disabled-password --gecos "" aiuser
